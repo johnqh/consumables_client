@@ -1,8 +1,8 @@
 import type {
-  CreditBalance,
-  CreditPurchaseRecord,
-  CreditUsageRecord,
-} from "../types";
+  ConsumablePurchaseRecord,
+  ConsumableUsageRecord,
+} from "@sudobility/types";
+import type { CreditBalance } from "../types";
 
 export interface ConsumablesApiClientConfig {
   baseUrl: string;
@@ -82,14 +82,17 @@ export class ConsumablesApiClient {
   async getPurchaseHistory(
     limit = 50,
     offset = 0,
-  ): Promise<CreditPurchaseRecord[]> {
-    return this.request<CreditPurchaseRecord[]>(
+  ): Promise<ConsumablePurchaseRecord[]> {
+    return this.request<ConsumablePurchaseRecord[]>(
       `/purchases?limit=${limit}&offset=${offset}`,
     );
   }
 
-  async getUsageHistory(limit = 50, offset = 0): Promise<CreditUsageRecord[]> {
-    return this.request<CreditUsageRecord[]>(
+  async getUsageHistory(
+    limit = 50,
+    offset = 0,
+  ): Promise<ConsumableUsageRecord[]> {
+    return this.request<ConsumableUsageRecord[]>(
       `/usages?limit=${limit}&offset=${offset}`,
     );
   }

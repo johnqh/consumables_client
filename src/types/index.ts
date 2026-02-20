@@ -1,22 +1,5 @@
 export * from "./adapter";
 
-// Shared types from @sudobility/types (re-exported for convenience)
-export type {
-  ConsumableSource,
-  ConsumableBalanceResponse,
-  ConsumablePurchaseRequest,
-  ConsumableUseRequest,
-  ConsumableUseResponse,
-  ConsumablePurchaseRecord,
-  ConsumableUsageRecord,
-} from "@sudobility/types";
-
-// Backward-compat aliases used throughout the client and consumers
-export type {
-  ConsumablePurchaseRecord as CreditPurchaseRecord,
-  ConsumableUsageRecord as CreditUsageRecord,
-} from "@sudobility/types";
-
 // === Client-only types ===
 
 /** A purchasable credit package from RevenueCat */

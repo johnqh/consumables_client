@@ -42,20 +42,6 @@ export {
   type UseUsageHistoryResult,
 } from "./hooks";
 
-// Types (shared from @sudobility/types, re-exported via ./types)
-export type {
-  ConsumableSource,
-  ConsumableBalanceResponse,
-  ConsumablePurchaseRequest,
-  ConsumableUseRequest,
-  ConsumableUseResponse,
-  ConsumablePurchaseRecord,
-  ConsumableUsageRecord,
-  // Backward-compat aliases
-  CreditPurchaseRecord,
-  CreditUsageRecord,
-} from "./types";
-
 // Types (client-only)
 export type {
   ConsumablesAdapter,

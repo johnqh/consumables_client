@@ -1,10 +1,12 @@
 import type {
+  ConsumablePurchaseRecord,
+  ConsumableUsageRecord,
+} from "@sudobility/types";
+import type {
   ConsumablePurchaseParams,
   ConsumablesAdapter,
   CreditBalance,
   CreditOffering,
-  CreditPurchaseRecord,
-  CreditUsageRecord,
 } from "../types";
 import type { ConsumablesApiClient } from "../network/ConsumablesApiClient";
 
@@ -119,7 +121,7 @@ export class ConsumablesService {
   async getPurchaseHistory(
     limit?: number,
     offset?: number,
-  ): Promise<CreditPurchaseRecord[]> {
+  ): Promise<ConsumablePurchaseRecord[]> {
     return this.apiClient.getPurchaseHistory(limit, offset);
   }
 
@@ -127,7 +129,7 @@ export class ConsumablesService {
   async getUsageHistory(
     limit?: number,
     offset?: number,
-  ): Promise<CreditUsageRecord[]> {
+  ): Promise<ConsumableUsageRecord[]> {
     return this.apiClient.getUsageHistory(limit, offset);
   }
 

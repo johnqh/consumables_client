@@ -5,10 +5,10 @@ import {
   isConsumablesInitialized,
   onConsumablesUserIdChange,
 } from "../core/singleton";
-import type { CreditPurchaseRecord } from "../types";
+import type { ConsumablePurchaseRecord } from "@sudobility/types";
 
 export interface UsePurchaseHistoryResult {
-  purchases: CreditPurchaseRecord[];
+  purchases: ConsumablePurchaseRecord[];
   isLoading: boolean;
   error: Error | null;
   loadMore: () => Promise<void>;
@@ -16,7 +16,7 @@ export interface UsePurchaseHistoryResult {
 }
 
 export function usePurchaseHistory(limit = 50): UsePurchaseHistoryResult {
-  const [purchases, setPurchases] = useState<CreditPurchaseRecord[]>([]);
+  const [purchases, setPurchases] = useState<ConsumablePurchaseRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
