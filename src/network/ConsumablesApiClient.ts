@@ -27,10 +27,7 @@ export class ConsumablesApiClient {
     return h;
   }
 
-  private async request<T>(
-    path: string,
-    options?: RequestInit,
-  ): Promise<T> {
+  private async request<T>(path: string, options?: RequestInit): Promise<T> {
     const url = `${this.baseUrl}/api/v1/consumables${path}`;
     const headers = await this.headers();
     const res = await fetch(url, { ...options, headers });
@@ -91,10 +88,7 @@ export class ConsumablesApiClient {
     );
   }
 
-  async getUsageHistory(
-    limit = 50,
-    offset = 0,
-  ): Promise<CreditUsageRecord[]> {
+  async getUsageHistory(limit = 50, offset = 0): Promise<CreditUsageRecord[]> {
     return this.request<CreditUsageRecord[]>(
       `/usages?limit=${limit}&offset=${offset}`,
     );

@@ -1,8 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   getConsumablesInstance,
-  isConsumablesInitialized,
   getConsumablesUserId,
+  isConsumablesInitialized,
   onConsumablesUserIdChange,
 } from "../core/singleton";
 import type { CreditUsageRecord } from "../types";

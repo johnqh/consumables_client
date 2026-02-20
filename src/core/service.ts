@@ -1,9 +1,8 @@
 import type {
-  ConsumablesAdapter,
   ConsumablePurchaseParams,
+  ConsumablesAdapter,
   CreditBalance,
   CreditOffering,
-  CreditPackage,
   CreditPurchaseRecord,
   CreditUsageRecord,
 } from "../types";
@@ -79,9 +78,7 @@ export class ConsumablesService {
   }
 
   /** Execute purchase: adapter.purchase() then apiClient.recordPurchase(). */
-  async purchase(
-    params: ConsumablePurchaseParams,
-  ): Promise<CreditBalance> {
+  async purchase(params: ConsumablePurchaseParams): Promise<CreditBalance> {
     // 1. Call adapter.purchase() — opens RevenueCat payment UI
     const purchaseResult = await this.adapter.purchase(params);
 

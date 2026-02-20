@@ -11,7 +11,4 @@ export {
   usePurchaseHistory,
   type UsePurchaseHistoryResult,
 } from "./usePurchaseHistory";
-export {
-  useUsageHistory,
-  type UseUsageHistoryResult,
-} from "./useUsageHistory";
+export { useUsageHistory, type UseUsageHistoryResult } from "./useUsageHistory";

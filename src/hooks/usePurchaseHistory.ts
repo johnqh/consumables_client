@@ -1,8 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   getConsumablesInstance,
-  isConsumablesInitialized,
   getConsumablesUserId,
+  isConsumablesInitialized,
   onConsumablesUserIdChange,
 } from "../core/singleton";
 import type { CreditPurchaseRecord } from "../types";
@@ -15,9 +15,7 @@ export interface UsePurchaseHistoryResult {
   refetch: () => Promise<void>;
 }
 
-export function usePurchaseHistory(
-  limit = 50,
-): UsePurchaseHistoryResult {
+export function usePurchaseHistory(limit = 50): UsePurchaseHistoryResult {
   const [purchases, setPurchases] = useState<CreditPurchaseRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -46,10 +44,7 @@ export function usePurchaseHistory(
     if (!isConsumablesInitialized()) return;
     try {
       const instance = getConsumablesInstance();
-      const result = await instance.getPurchaseHistory(
-        limit,
-        purchases.length,
-      );
+      const result = await instance.getPurchaseHistory(limit, purchases.length);
       setPurchases((prev) => [...prev, ...result]);
     } catch (err) {
       setError(err instanceof Error ? err : new Error(String(err)));

@@ -6,9 +6,9 @@
  */
 
 import type {
-  ConsumablesAdapter,
   ConsumablePurchaseParams,
   ConsumablePurchaseResult,
+  ConsumablesAdapter,
 } from "../types/adapter";
 import type { CreditPackage } from "../types";
 
@@ -17,9 +17,7 @@ let currentUserId: string | null = null;
 let isConfigured = false;
 
 /** Configure the RN adapter with RevenueCat API key. */
-export function configureConsumablesRNAdapter(
-  revenueCatApiKey: string,
-): void {
+export function configureConsumablesRNAdapter(revenueCatApiKey: string): void {
   apiKey = revenueCatApiKey;
 }
 
@@ -87,10 +85,7 @@ export function hasConsumablesRNUser(): boolean {
 /** Create the consumables adapter for React Native. */
 export function createConsumablesRNAdapter(): ConsumablesAdapter {
   return {
-    async setUserId(
-      userId: string | undefined,
-      email?: string,
-    ): Promise<void> {
+    async setUserId(userId: string | undefined, email?: string): Promise<void> {
       if (userId) {
         await setConsumablesRNUser(userId, email);
       } else {
@@ -136,10 +131,7 @@ export function createConsumablesRNAdapter(): ConsumablesAdapter {
 
         return { all };
       } catch (error) {
-        console.error(
-          "[consumables-rn] Failed to get offerings:",
-          error,
-        );
+        console.error("[consumables-rn] Failed to get offerings:", error);
         return { all: {} };
       }
     },
@@ -176,7 +168,8 @@ export function createConsumablesRNAdapter(): ConsumablesAdapter {
 
       // Determine source based on platform
       const platform =
-        typeof navigator !== "undefined" && (navigator as any).product === "ReactNative"
+        typeof navigator !== "undefined" &&
+        (navigator as any).product === "ReactNative"
           ? "apple" // Default to apple for RN, could be refined with Platform.OS
           : "apple";
 
@@ -184,9 +177,7 @@ export function createConsumablesRNAdapter(): ConsumablesAdapter {
         transactionId,
         productId: packageToPurchase.product?.identifier || "",
         credits,
-        priceCents: Math.round(
-          (packageToPurchase.product?.price || 0) * 100,
-        ),
+        priceCents: Math.round((packageToPurchase.product?.price || 0) * 100),
         currency: packageToPurchase.product?.currencyCode || "USD",
         source: platform as "apple" | "google",
       };

@@ -6,9 +6,9 @@
  */
 
 import type {
-  ConsumablesAdapter,
   ConsumablePurchaseParams,
   ConsumablePurchaseResult,
+  ConsumablesAdapter,
 } from "../types/adapter";
 import type { CreditPackage } from "../types";
 
@@ -23,9 +23,7 @@ let pendingUserSetup: string | null = null;
 const ANONYMOUS_USER_ID = "$RCAnonymousID:credits_viewer";
 
 /** Configure the web adapter with RevenueCat API key. */
-export function configureConsumablesWebAdapter(
-  revenueCatApiKey: string,
-): void {
+export function configureConsumablesWebAdapter(revenueCatApiKey: string): void {
   apiKey = revenueCatApiKey;
 }
 
@@ -111,10 +109,7 @@ function convertPackage(pkg: Package): CreditPackage {
 /** Create the consumables adapter for web. */
 export function createConsumablesWebAdapter(): ConsumablesAdapter {
   return {
-    async setUserId(
-      userId: string | undefined,
-      email?: string,
-    ): Promise<void> {
+    async setUserId(userId: string | undefined, email?: string): Promise<void> {
       if (userId) {
         await setConsumablesWebUser(userId, email);
       } else {
@@ -146,10 +141,7 @@ export function createConsumablesWebAdapter(): ConsumablesAdapter {
 
         return { all };
       } catch (error) {
-        console.error(
-          "[consumables-web] Failed to get offerings:",
-          error,
-        );
+        console.error("[consumables-web] Failed to get offerings:", error);
         return { all: {} };
       }
     },

@@ -1,10 +1,10 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   getConsumablesInstance,
+  getConsumablesUserId,
   isConsumablesInitialized,
   onConsumablesBalanceChange,
   onConsumablesUserIdChange,
-  getConsumablesUserId,
 } from "../core/singleton";
 
 export interface UseBalanceResult {
