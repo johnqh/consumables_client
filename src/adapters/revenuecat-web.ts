@@ -10,7 +10,7 @@ import type {
   ConsumablePurchaseResult,
   ConsumablesAdapter,
 } from "../types/adapter";
-import type { CreditPackage } from "../types";
+import type { CreditPackage, ProductMetadata } from "../types";
 
 type Purchases = import("@revenuecat/purchases-js").Purchases;
 type Package = import("@revenuecat/purchases-js").Package;
@@ -89,7 +89,8 @@ export function hasConsumablesWebUser(): boolean {
 
 function convertPackage(pkg: Package): CreditPackage {
   const product = pkg.rcBillingProduct;
-  const metadata = (product as any).metadata || {};
+  const metadata = ((product as unknown as Record<string, unknown>).metadata ||
+    {}) as ProductMetadata;
   const credits = typeof metadata.credits === "number" ? metadata.credits : 0;
 
   return {
@@ -169,7 +170,8 @@ export function createConsumablesWebAdapter(): ConsumablesAdapter {
       });
 
       const product = packageToPurchase.rcBillingProduct;
-      const metadata = (product as any).metadata || {};
+      const metadata = ((product as unknown as Record<string, unknown>)
+        .metadata || {}) as ProductMetadata;
       const credits =
         typeof metadata.credits === "number" ? metadata.credits : 0;
 

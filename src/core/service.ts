@@ -27,7 +27,7 @@ export class ConsumablesService {
   private balanceCache: CreditBalance | null = null;
   private offeringsCache: Map<string, CreditOffering> = new Map();
   private loadOfferingsPromise: Promise<void> | null = null;
-  private isLoadingBalance = false;
+  private loadBalancePromise: Promise<CreditBalance> | null = null;
 
   constructor(config: ConsumablesServiceConfig) {
     this.adapter = config.adapter;
@@ -83,16 +83,19 @@ export class ConsumablesService {
    * @returns The user's credit balance.
    */
   async loadBalance(): Promise<CreditBalance> {
-    if (this.isLoadingBalance && this.balanceCache) {
-      return this.balanceCache;
-    }
-    this.isLoadingBalance = true;
-    try {
-      this.balanceCache = await this.apiClient.getBalance();
-      return this.balanceCache;
-    } finally {
-      this.isLoadingBalance = false;
-    }
+    if (this.balanceCache) return this.balanceCache;
+    if (this.loadBalancePromise) return this.loadBalancePromise;
+
+    this.loadBalancePromise = (async () => {
+      try {
+        this.balanceCache = await this.apiClient.getBalance();
+        return this.balanceCache;
+      } finally {
+        this.loadBalancePromise = null;
+      }
+    })();
+
+    return this.loadBalancePromise;
   }
 
   /**

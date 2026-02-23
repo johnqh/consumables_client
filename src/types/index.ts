@@ -8,6 +8,12 @@ export * from "./adapter";
 
 // === Client-only types ===
 
+/** Typed metadata from RevenueCat product. */
+export interface ProductMetadata {
+  credits?: number;
+  [key: string]: unknown;
+}
+
 /** A purchasable credit package from RevenueCat. */
 export interface CreditPackage {
   packageId: string;

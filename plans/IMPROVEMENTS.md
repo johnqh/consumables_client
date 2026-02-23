@@ -2,7 +2,7 @@
 
 ## Priority 1: Critical / High-Impact
 
-### 1.1 Add Platform Detection for RN Adapter Source
+### 1.1 Add Platform Detection for RN Adapter Source ✅ DONE
 **File**: `src/adapters/revenuecat-rn.ts`
 **Issue**: The `purchase()` method always returns `"apple"` as the source, even on Android devices.
 **Suggestion**: Use React Native's `Platform.OS` to correctly set `"apple"` or `"google"` as the source. This affects purchase recording accuracy.
@@ -12,19 +12,19 @@
 **Issue**: When the network request fails, the error is caught but there is no retry mechanism. The user sees an error state with no way to recover other than calling `refetch()` manually.
 **Suggestion**: Add an `autoRetry` option or integrate exponential backoff. Alternatively, provide clearer guidance to consuming apps on retry strategies.
 
-### 1.3 Add `verify` Script
+### 1.3 Add `verify` Script ✅ DONE
 **File**: `package.json`
 **Issue**: Unlike `consumables_service`, there is no `verify` script that runs typecheck + lint + test + build in sequence.
 **Suggestion**: Add `"verify": "bun run typecheck && bun run lint && bun run test && bun run build"` to scripts for pre-commit validation.
 
 ## Priority 2: Moderate / Quality
 
-### 2.1 Race Condition in Balance Loading
+### 2.1 Race Condition in Balance Loading ✅ DONE
 **File**: `src/core/service.ts`
 **Issue**: `loadBalance()` uses an `isLoadingBalance` flag but does not deduplicate concurrent calls with a shared promise (unlike `loadOfferings()` which does). Two concurrent `loadBalance()` calls could produce two API requests.
 **Suggestion**: Apply the same deduplication pattern used in `loadOfferings()` -- store and reuse a pending promise.
 
-### 2.2 Type Safety for `credits` Metadata Parsing
+### 2.2 Type Safety for `credits` Metadata Parsing ✅ DONE
 **Files**: `src/adapters/revenuecat-web.ts`, `src/adapters/revenuecat-rn.ts`
 **Issue**: Credit count is extracted from `product.metadata.credits` with a `typeof === "number"` check, falling back to 0. The `(product as any).metadata` cast bypasses type safety.
 **Suggestion**: Define a typed metadata interface and validate with a runtime check or Zod schema.

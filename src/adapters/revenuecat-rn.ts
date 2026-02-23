@@ -10,7 +10,7 @@ import type {
   ConsumablePurchaseResult,
   ConsumablesAdapter,
 } from "../types/adapter";
-import type { CreditPackage } from "../types";
+import type { CreditPackage, ProductMetadata } from "../types";
 
 let apiKey: string | null = null;
 let currentUserId: string | null = null;
@@ -112,7 +112,7 @@ export function createConsumablesRNAdapter(): ConsumablesAdapter {
             identifier: offering.identifier,
             metadata: offering.metadata || null,
             packages: offering.availablePackages.map((pkg: any) => {
-              const metadata = pkg.product?.metadata || {};
+              const metadata = (pkg.product?.metadata ?? {}) as ProductMetadata;
               const credits =
                 typeof metadata.credits === "number" ? metadata.credits : 0;
               return {
@@ -155,7 +155,8 @@ export function createConsumablesRNAdapter(): ConsumablesAdapter {
       }
 
       const result = await Purchases.purchasePackage(packageToPurchase);
-      const metadata = packageToPurchase.product?.metadata || {};
+      const metadata = (packageToPurchase.product?.metadata ||
+        {}) as ProductMetadata;
       const credits =
         typeof metadata.credits === "number" ? metadata.credits : 0;
 
@@ -167,11 +168,11 @@ export function createConsumablesRNAdapter(): ConsumablesAdapter {
         latestTransaction?.transactionIdentifier || `rn_${Date.now()}`;
 
       // Determine source based on platform
-      const platform =
-        typeof navigator !== "undefined" &&
-        (navigator as any).product === "ReactNative"
-          ? "apple" // Default to apple for RN, could be refined with Platform.OS
-          : "apple";
+      const { Platform } = require("react-native") as {
+        Platform: { OS: string };
+      };
+      const platform: "apple" | "google" =
+        Platform.OS === "ios" ? "apple" : "google";
 
       return {
         transactionId,
@@ -179,7 +180,7 @@ export function createConsumablesRNAdapter(): ConsumablesAdapter {
         credits,
         priceCents: Math.round((packageToPurchase.product?.price || 0) * 100),
         currency: packageToPurchase.product?.currencyCode || "USD",
-        source: platform as "apple" | "google",
+        source: platform,
       };
     },
   };
