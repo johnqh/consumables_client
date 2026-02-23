@@ -1,3 +1,8 @@
+/**
+ * @fileoverview React hook for tracking the current user's credit balance.
+ * Subscribes to both balance change and user ID change events from the singleton.
+ */
+
 import { useCallback, useEffect, useState } from "react";
 import {
   getConsumablesInstance,
@@ -7,6 +12,7 @@ import {
   onConsumablesUserIdChange,
 } from "../core/singleton";
 
+/** Result object returned by the useBalance hook. */
 export interface UseBalanceResult {
   balance: number | null;
   initialCredits: number | null;
@@ -15,6 +21,12 @@ export interface UseBalanceResult {
   refetch: () => Promise<void>;
 }
 
+/**
+ * Hook that tracks the current user's credit balance.
+ * Automatically loads the balance on mount and re-fetches when the user ID changes.
+ * Listens to balance change events emitted after purchases or usage.
+ * @returns Current balance, loading/error state, and a refetch function.
+ */
 export function useBalance(): UseBalanceResult {
   const [balance, setBalance] = useState<number | null>(null);
   const [initialCredits, setInitialCredits] = useState<number | null>(null);

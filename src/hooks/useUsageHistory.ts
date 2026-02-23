@@ -1,3 +1,8 @@
+/**
+ * @fileoverview React hook for loading paginated usage history.
+ * Supports initial load, load-more pagination, and automatic refresh on user change.
+ */
+
 import { useCallback, useEffect, useState } from "react";
 import {
   getConsumablesInstance,
@@ -7,6 +12,7 @@ import {
 } from "../core/singleton";
 import type { ConsumableUsageRecord } from "@sudobility/types";
 
+/** Result object returned by the useUsageHistory hook. */
 export interface UseUsageHistoryResult {
   usages: ConsumableUsageRecord[];
   isLoading: boolean;
@@ -15,6 +21,12 @@ export interface UseUsageHistoryResult {
   refetch: () => Promise<void>;
 }
 
+/**
+ * Hook that loads paginated usage history for the current user.
+ * Automatically reloads when the user ID changes.
+ * @param limit - Maximum number of records per page. Defaults to 50.
+ * @returns Usage records, loading/error state, loadMore and refetch functions.
+ */
 export function useUsageHistory(limit = 50): UseUsageHistoryResult {
   const [usages, setUsages] = useState<ConsumableUsageRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);

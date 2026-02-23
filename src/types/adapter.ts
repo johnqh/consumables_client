@@ -1,6 +1,11 @@
+/**
+ * @fileoverview Adapter interface and related types for platform-specific purchase flows.
+ * Defines the ConsumablesAdapter contract implemented by web and React Native adapters.
+ */
+
 import type { CreditPackage } from "./index";
 
-/** Platform-specific purchase result */
+/** Platform-specific purchase result returned after a successful purchase. */
 export interface ConsumablePurchaseResult {
   transactionId: string;
   productId: string;

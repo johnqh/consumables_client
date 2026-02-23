@@ -1,8 +1,14 @@
+/**
+ * @fileoverview Client-only type definitions for the consumables credit system.
+ * Defines CreditPackage, CreditOffering, and CreditBalance interfaces used
+ * by hooks and the ConsumablesService.
+ */
+
 export * from "./adapter";
 
 // === Client-only types ===
 
-/** A purchasable credit package from RevenueCat */
+/** A purchasable credit package from RevenueCat. */
 export interface CreditPackage {
   packageId: string;
   productId: string;

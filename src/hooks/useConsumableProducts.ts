@@ -1,3 +1,7 @@
+/**
+ * @fileoverview React hook for loading available credit packages from a RevenueCat offering.
+ */
+
 import { useCallback, useEffect, useState } from "react";
 import {
   getConsumablesInstance,
@@ -5,6 +9,7 @@ import {
 } from "../core/singleton";
 import type { CreditPackage } from "../types";
 
+/** Result object returned by the useConsumableProducts hook. */
 export interface UseConsumableProductsResult {
   packages: CreditPackage[];
   isLoading: boolean;
@@ -12,6 +17,12 @@ export interface UseConsumableProductsResult {
   refetch: () => Promise<void>;
 }
 
+/**
+ * Hook that loads available credit packages from a specific RevenueCat offering.
+ * Caches offerings globally (they do not change per user).
+ * @param offeringId - The RevenueCat offering identifier to load packages from.
+ * @returns Available packages, loading/error state, and a refetch function.
+ */
 export function useConsumableProducts(
   offeringId: string,
 ): UseConsumableProductsResult {

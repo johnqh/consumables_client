@@ -1,7 +1,14 @@
+/**
+ * @fileoverview Module-level singleton for the consumables system.
+ * Provides initialization, user management, and event subscription functions
+ * without requiring a React Context provider.
+ */
+
 import type { ConsumablesAdapter } from "../types/adapter";
 import type { ConsumablesApiClient } from "../network/ConsumablesApiClient";
 import { ConsumablesService } from "./service";
 
+/** Configuration for initializing the consumables singleton. */
 export interface ConsumablesConfig {
   adapter: ConsumablesAdapter;
   apiClient: ConsumablesApiClient;

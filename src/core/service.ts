@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Core ConsumablesService class that orchestrates adapter and API client
+ * interactions. Manages caching of offerings (global) and balance (per-user).
+ */
+
 import type {
   ConsumablePurchaseRecord,
   ConsumableUsageRecord,
@@ -10,6 +15,7 @@ import type {
 } from "../types";
 import type { ConsumablesApiClient } from "../network/ConsumablesApiClient";
 
+/** Configuration for constructing a ConsumablesService instance. */
 export interface ConsumablesServiceConfig {
   adapter: ConsumablesAdapter;
   apiClient: ConsumablesApiClient;
@@ -28,7 +34,11 @@ export class ConsumablesService {
     this.apiClient = config.apiClient;
   }
 
-  /** Load offerings from RevenueCat (with caching). */
+  /**
+   * Loads offerings from RevenueCat via the adapter.
+   * Caches results globally; subsequent calls are no-ops if cache is populated.
+   * Deduplicates concurrent calls via a shared promise.
+   */
   async loadOfferings(): Promise<void> {
     if (this.offeringsCache.size > 0) return;
     if (this.loadOfferingsPromise) return this.loadOfferingsPromise;
@@ -50,17 +60,28 @@ export class ConsumablesService {
     return this.loadOfferingsPromise;
   }
 
-  /** Get a specific offering by ID. */
+  /**
+   * Retrieves a cached offering by its identifier.
+   * @param offeringId - The RevenueCat offering identifier.
+   * @returns The offering with its packages, or null if not found in cache.
+   */
   getOffering(offeringId: string): CreditOffering | null {
     return this.offeringsCache.get(offeringId) ?? null;
   }
 
-  /** Get all offering IDs. */
+  /**
+   * Returns all cached offering identifiers.
+   * @returns Array of offering ID strings.
+   */
   getOfferingIds(): string[] {
     return Array.from(this.offeringsCache.keys());
   }
 
-  /** Load balance from API. */
+  /**
+   * Loads the current user's balance from the backend API.
+   * Caches the result; returns cached value if a load is already in progress.
+   * @returns The user's credit balance.
+   */
   async loadBalance(): Promise<CreditBalance> {
     if (this.isLoadingBalance && this.balanceCache) {
       return this.balanceCache;
@@ -74,12 +95,20 @@ export class ConsumablesService {
     }
   }
 
-  /** Get cached balance (null if not loaded). */
+  /**
+   * Returns the cached balance without making an API call.
+   * @returns The cached credit balance, or null if not yet loaded.
+   */
   getCachedBalance(): CreditBalance | null {
     return this.balanceCache;
   }
 
-  /** Execute purchase: adapter.purchase() then apiClient.recordPurchase(). */
+  /**
+   * Executes a full purchase flow: opens RevenueCat payment UI via adapter,
+   * records the purchase on the backend, and updates the local balance cache.
+   * @param params - The package and offering IDs to purchase.
+   * @returns The updated credit balance after the purchase.
+   */
   async purchase(params: ConsumablePurchaseParams): Promise<CreditBalance> {
     // 1. Call adapter.purchase() — opens RevenueCat payment UI
     const purchaseResult = await this.adapter.purchase(params);
@@ -100,7 +129,12 @@ export class ConsumablesService {
     return balance;
   }
 
-  /** Record a usage (download). */
+  /**
+   * Records a credit usage (e.g., file download) on the backend.
+   * Updates the local balance cache with the new balance.
+   * @param filename - Optional filename associated with this usage.
+   * @returns The updated balance and whether the usage was successful.
+   */
   async recordUsage(
     filename?: string,
   ): Promise<{ balance: number; success: boolean }> {
@@ -117,7 +151,12 @@ export class ConsumablesService {
     return result;
   }
 
-  /** Get purchase history from API. */
+  /**
+   * Fetches paginated purchase history from the API.
+   * @param limit - Maximum number of records to return.
+   * @param offset - Number of records to skip.
+   * @returns Array of purchase records.
+   */
   async getPurchaseHistory(
     limit?: number,
     offset?: number,
@@ -125,7 +164,12 @@ export class ConsumablesService {
     return this.apiClient.getPurchaseHistory(limit, offset);
   }
 
-  /** Get usage history from API. */
+  /**
+   * Fetches paginated usage history from the API.
+   * @param limit - Maximum number of records to return.
+   * @param offset - Number of records to skip.
+   * @returns Array of usage records.
+   */
   async getUsageHistory(
     limit?: number,
     offset?: number,
@@ -133,16 +177,21 @@ export class ConsumablesService {
     return this.apiClient.getUsageHistory(limit, offset);
   }
 
-  /** Clear cached data (on user change). */
+  /**
+   * Clears the balance cache. Called on user change.
+   * Preserves the offerings cache since products are not user-specific.
+   */
   clearCache(): void {
     this.balanceCache = null;
     // Preserve offerings cache — products don't change per user
   }
 
+  /** @returns Whether offerings have been loaded and cached. */
   hasLoadedOfferings(): boolean {
     return this.offeringsCache.size > 0;
   }
 
+  /** @returns Whether the balance has been loaded and cached. */
   hasLoadedBalance(): boolean {
     return this.balanceCache !== null;
   }

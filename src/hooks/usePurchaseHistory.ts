@@ -1,3 +1,8 @@
+/**
+ * @fileoverview React hook for loading paginated purchase history.
+ * Supports initial load, load-more pagination, and automatic refresh on user change.
+ */
+
 import { useCallback, useEffect, useState } from "react";
 import {
   getConsumablesInstance,
@@ -7,6 +12,7 @@ import {
 } from "../core/singleton";
 import type { ConsumablePurchaseRecord } from "@sudobility/types";
 
+/** Result object returned by the usePurchaseHistory hook. */
 export interface UsePurchaseHistoryResult {
   purchases: ConsumablePurchaseRecord[];
   isLoading: boolean;
@@ -15,6 +21,12 @@ export interface UsePurchaseHistoryResult {
   refetch: () => Promise<void>;
 }
 
+/**
+ * Hook that loads paginated purchase history for the current user.
+ * Automatically reloads when the user ID changes.
+ * @param limit - Maximum number of records per page. Defaults to 50.
+ * @returns Purchase records, loading/error state, loadMore and refetch functions.
+ */
 export function usePurchaseHistory(limit = 50): UsePurchaseHistoryResult {
   const [purchases, setPurchases] = useState<ConsumablePurchaseRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
