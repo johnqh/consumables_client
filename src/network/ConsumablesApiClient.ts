@@ -1,45 +1,60 @@
 import type {
   ConsumablePurchaseRecord,
   ConsumableUsageRecord,
+  NetworkClient,
 } from "@sudobility/types";
 import type { CreditBalance } from "../types";
 
 export interface ConsumablesApiClientConfig {
   baseUrl: string;
-  getToken?: () => Promise<string | null>;
+  networkClient: NetworkClient;
+}
+
+interface ApiResponse<T> {
+  data: T;
+  error?: string;
 }
 
 export class ConsumablesApiClient {
-  private baseUrl: string;
-  private getToken: (() => Promise<string | null>) | undefined;
+  private readonly baseUrl: string;
+  private readonly networkClient: NetworkClient;
 
   constructor(config: ConsumablesApiClientConfig) {
     this.baseUrl = config.baseUrl.replace(/\/$/, "");
-    this.getToken = config.getToken;
+    this.networkClient = config.networkClient;
   }
 
-  private async headers(): Promise<Record<string, string>> {
-    const h: Record<string, string> = { "Content-Type": "application/json" };
-    if (this.getToken) {
-      const token = await this.getToken();
-      if (token) h["Authorization"] = `Bearer ${token}`;
-    }
-    return h;
+  private buildUrl(path: string): string {
+    return `${this.baseUrl}/api/v1/consumables${path}`;
   }
 
-  private async request<T>(path: string, options?: RequestInit): Promise<T> {
-    const url = `${this.baseUrl}/api/v1/consumables${path}`;
-    const headers = await this.headers();
-    const res = await fetch(url, { ...options, headers });
-    const json = (await res.json()) as any;
-    if (!res.ok) {
-      throw new Error(json.error || `Request failed: ${res.status}`);
+  private async get<T>(path: string): Promise<T> {
+    const response = await this.networkClient.get<ApiResponse<T>>(
+      this.buildUrl(path),
+    );
+    if (!response.ok || !response.data) {
+      throw new Error(
+        response.data?.error || `Request failed: ${response.status}`,
+      );
     }
-    return json.data as T;
+    return response.data.data;
+  }
+
+  private async post<T>(path: string, body?: unknown): Promise<T> {
+    const response = await this.networkClient.post<ApiResponse<T>>(
+      this.buildUrl(path),
+      body,
+    );
+    if (!response.ok || !response.data) {
+      throw new Error(
+        response.data?.error || `Request failed: ${response.status}`,
+      );
+    }
+    return response.data.data;
   }
 
   async getBalance(): Promise<CreditBalance> {
-    const data = await this.request<{
+    const data = await this.get<{
       balance: number;
       initial_credits: number;
     }>("/balance");
@@ -57,13 +72,10 @@ export class ConsumablesApiClient {
     price_cents?: number;
     currency?: string;
   }): Promise<CreditBalance> {
-    const data = await this.request<{
+    const data = await this.post<{
       balance: number;
       initial_credits: number;
-    }>("/purchase", {
-      method: "POST",
-      body: JSON.stringify(params),
-    });
+    }>("/purchase", params);
     return {
       balance: data.balance,
       initialCredits: data.initial_credits,
@@ -73,9 +85,8 @@ export class ConsumablesApiClient {
   async recordUsage(
     filename?: string,
   ): Promise<{ balance: number; success: boolean }> {
-    return this.request<{ balance: number; success: boolean }>("/use", {
-      method: "POST",
-      body: JSON.stringify({ filename }),
+    return this.post<{ balance: number; success: boolean }>("/use", {
+      filename,
     });
   }
 
@@ -83,7 +94,7 @@ export class ConsumablesApiClient {
     limit = 50,
     offset = 0,
   ): Promise<ConsumablePurchaseRecord[]> {
-    return this.request<ConsumablePurchaseRecord[]>(
+    return this.get<ConsumablePurchaseRecord[]>(
       `/purchases?limit=${limit}&offset=${offset}`,
     );
   }
@@ -92,7 +103,7 @@ export class ConsumablesApiClient {
     limit = 50,
     offset = 0,
   ): Promise<ConsumableUsageRecord[]> {
-    return this.request<ConsumableUsageRecord[]>(
+    return this.get<ConsumableUsageRecord[]>(
       `/usages?limit=${limit}&offset=${offset}`,
     );
   }
