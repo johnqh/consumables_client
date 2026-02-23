@@ -1,6 +1,6 @@
 {
   "name": "@sudobility/consumables_client",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Cross-platform consumable credits client with RevenueCat adapter pattern",
   "type": "module",
   "main": "./dist/index.js",
