@@ -1,6 +1,6 @@
 {
   "name": "@sudobility/consumables_client",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Cross-platform consumable credits client with RevenueCat adapter pattern",
   "type": "module",
   "main": "./dist/index.js",
@@ -10,6 +10,14 @@
     ".": {
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "./adapter/web": {
+      "import": "./dist/adapters/revenuecat-web.js",
+      "types": "./dist/adapters/revenuecat-web.d.ts"
+    },
+    "./adapter/rn": {
+      "import": "./dist/adapters/revenuecat-rn.js",
+      "types": "./dist/adapters/revenuecat-rn.d.ts"
     }
   },
   "files": [

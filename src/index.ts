@@ -52,16 +52,6 @@ export type {
   CreditBalance,
 } from "./types";
 
-// Adapters (platform-specific)
-export {
-  configureConsumablesWebAdapter,
-  createConsumablesWebAdapter,
-  setConsumablesWebUser,
-  clearConsumablesWebUser,
-  hasConsumablesWebUser,
-  configureConsumablesRNAdapter,
-  createConsumablesRNAdapter,
-  setConsumablesRNUser,
-  clearConsumablesRNUser,
-  hasConsumablesRNUser,
-} from "./adapters";
+// Adapters are exported via subpath imports:
+//   @sudobility/consumables_client/adapter/web
+//   @sudobility/consumables_client/adapter/rn
