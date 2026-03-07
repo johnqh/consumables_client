@@ -131,13 +131,6 @@ Dependency direction: `consumables_pages` --> `consumables_client` --> `consumab
 - **RN adapter defaults source to "apple"**: The React Native adapter currently always returns `"apple"` as the purchase source. Platform detection for Android ("google") is not implemented.
 - **`removeComments: true` in tsconfig**: JSDoc comments are stripped from the build output. This is intentional for bundle size but means consumers cannot see inline docs from `dist/`.
 
-## Testing
-
-- Run tests: `bun test` (uses vitest)
-- Tests use **mocked adapters** -- they do not call real RevenueCat or backend APIs.
-- When adding new functionality, write tests using the mock adapter pattern found in existing test files.
-- Test hooks by verifying they respond correctly to singleton events (balance changes, purchase completions).
-
 ## Publishing
 
 - Package: `@sudobility/consumables_client` (public on npm)
