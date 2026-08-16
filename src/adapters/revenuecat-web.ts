@@ -9,8 +9,8 @@ import type {
   ConsumablePurchaseParams,
   ConsumablePurchaseResult,
   ConsumablesAdapter,
-} from "../types/adapter.js";
-import type { CreditPackage, ProductMetadata } from "../types/index.js";
+} from "../types/adapter";
+import type { CreditPackage, ProductMetadata } from "../types";
 
 type Purchases = import("@revenuecat/purchases-js").Purchases;
 type Package = import("@revenuecat/purchases-js").Package;

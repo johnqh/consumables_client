@@ -1,17 +1,14 @@
-export { useBalance, type UseBalanceResult } from "./useBalance.js";
+export { useBalance, type UseBalanceResult } from "./useBalance";
 export {
   useConsumableProducts,
   type UseConsumableProductsResult,
-} from "./useConsumableProducts.js";
+} from "./useConsumableProducts";
 export {
   usePurchaseCredits,
   type UsePurchaseCreditsResult,
-} from "./usePurchaseCredits.js";
+} from "./usePurchaseCredits";
 export {
   usePurchaseHistory,
   type UsePurchaseHistoryResult,
-} from "./usePurchaseHistory.js";
-export {
-  useUsageHistory,
-  type UseUsageHistoryResult,
-} from "./useUsageHistory.js";
+} from "./usePurchaseHistory";
+export { useUsageHistory, type UseUsageHistoryResult } from "./useUsageHistory";

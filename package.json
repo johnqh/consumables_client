@@ -1,6 +1,6 @@
 {
   "name": "@sudobility/consumables_client",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "description": "Cross-platform consumable credits client with RevenueCat adapter pattern",
   "type": "module",
   "main": "./dist/index.js",
@@ -25,7 +25,7 @@
     "CLAUDE.md"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "bunx tsc -p tsconfig.build.json",
     "dev": "tsc --watch",
     "clean": "rm -rf dist",
     "typecheck": "bunx tsc --noEmit",

@@ -4,9 +4,9 @@
  * without requiring a React Context provider.
  */
 
-import type { ConsumablesAdapter } from "../types/adapter.js";
-import type { ConsumablesApiClient } from "../network/ConsumablesApiClient.js";
-import { ConsumablesService } from "./service.js";
+import type { ConsumablesAdapter } from "../types/adapter";
+import type { ConsumablesApiClient } from "../network/ConsumablesApiClient";
+import { ConsumablesService } from "./service";
 
 /** Configuration for initializing the consumables singleton. */
 export interface ConsumablesConfig {

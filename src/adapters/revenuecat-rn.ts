@@ -9,8 +9,8 @@ import type {
   ConsumablePurchaseParams,
   ConsumablePurchaseResult,
   ConsumablesAdapter,
-} from "../types/adapter.js";
-import type { CreditPackage, ProductMetadata } from "../types/index.js";
+} from "../types/adapter";
+import type { CreditPackage, ProductMetadata } from "../types";
 
 let apiKey: string | null = null;
 let currentUserId: string | null = null;

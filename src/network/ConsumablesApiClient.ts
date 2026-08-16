@@ -9,7 +9,7 @@ import type {
   ConsumableUsageRecord,
   NetworkClient,
 } from "@sudobility/types";
-import type { CreditBalance } from "../types/index.js";
+import type { CreditBalance } from "../types";
 
 /** Configuration for constructing a ConsumablesApiClient instance. */
 export interface ConsumablesApiClientConfig {
