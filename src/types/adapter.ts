@@ -3,7 +3,7 @@
  * Defines the ConsumablesAdapter contract implemented by web and React Native adapters.
  */
 
-import type { CreditPackage } from "./index";
+import type { CreditPackage } from "./index.js";
 
 /** Platform-specific purchase result returned after a successful purchase. */
 export interface ConsumablePurchaseResult {

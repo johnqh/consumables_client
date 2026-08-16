@@ -12,8 +12,8 @@ import type {
   ConsumablesAdapter,
   CreditBalance,
   CreditOffering,
-} from "../types";
-import type { ConsumablesApiClient } from "../network/ConsumablesApiClient";
+} from "../types/index.js";
+import type { ConsumablesApiClient } from "../network/ConsumablesApiClient.js";
 
 /** Configuration for constructing a ConsumablesService instance. */
 export interface ConsumablesServiceConfig {

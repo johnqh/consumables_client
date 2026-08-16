@@ -20,13 +20,13 @@ export {
   ConsumablesService,
   type ConsumablesConfig,
   type ConsumablesServiceConfig,
-} from "./core";
+} from "./core/index.js";
 
 // Network
 export {
   ConsumablesApiClient,
   type ConsumablesApiClientConfig,
-} from "./network/ConsumablesApiClient";
+} from "./network/ConsumablesApiClient.js";
 
 // Hooks
 export {
@@ -40,7 +40,7 @@ export {
   type UsePurchaseCreditsResult,
   type UsePurchaseHistoryResult,
   type UseUsageHistoryResult,
-} from "./hooks";
+} from "./hooks/index.js";
 
 // Types (client-only)
 export type {
@@ -50,7 +50,7 @@ export type {
   CreditPackage,
   CreditOffering,
   CreditBalance,
-} from "./types";
+} from "./types/index.js";
 
 // Adapters are exported via subpath imports:
 //   @sudobility/consumables_client/adapter/web

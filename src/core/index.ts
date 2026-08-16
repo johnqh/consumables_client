@@ -1,4 +1,7 @@
-export { ConsumablesService, type ConsumablesServiceConfig } from "./service";
+export {
+  ConsumablesService,
+  type ConsumablesServiceConfig,
+} from "./service.js";
 export {
   initializeConsumables,
   getConsumablesInstance,
@@ -11,4 +14,4 @@ export {
   onConsumablesUserIdChange,
   notifyBalanceChange,
   type ConsumablesConfig,
-} from "./singleton";
+} from "./singleton.js";

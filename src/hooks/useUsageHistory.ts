@@ -9,7 +9,7 @@ import {
   getConsumablesUserId,
   isConsumablesInitialized,
   onConsumablesUserIdChange,
-} from "../core/singleton";
+} from "../core/singleton.js";
 import type { ConsumableUsageRecord } from "@sudobility/types";
 
 /** Result object returned by the useUsageHistory hook. */

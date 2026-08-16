@@ -6,8 +6,8 @@ import { useCallback, useEffect, useState } from "react";
 import {
   getConsumablesInstance,
   isConsumablesInitialized,
-} from "../core/singleton";
-import type { CreditPackage } from "../types";
+} from "../core/singleton.js";
+import type { CreditPackage } from "../types/index.js";
 
 /** Result object returned by the useConsumableProducts hook. */
 export interface UseConsumableProductsResult {

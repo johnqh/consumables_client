@@ -10,7 +10,7 @@ import {
   isConsumablesInitialized,
   onConsumablesBalanceChange,
   onConsumablesUserIdChange,
-} from "../core/singleton";
+} from "../core/singleton.js";
 
 /** Result object returned by the useBalance hook. */
 export interface UseBalanceResult {

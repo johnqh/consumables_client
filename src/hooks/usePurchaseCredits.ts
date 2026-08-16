@@ -8,7 +8,7 @@ import {
   getConsumablesInstance,
   isConsumablesInitialized,
   notifyBalanceChange,
-} from "../core/singleton";
+} from "../core/singleton.js";
 
 /** Result object returned by the usePurchaseCredits hook. */
 export interface UsePurchaseCreditsResult {

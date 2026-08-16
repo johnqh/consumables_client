@@ -4,7 +4,7 @@
  * by hooks and the ConsumablesService.
  */
 
-export * from "./adapter";
+export * from "./adapter.js";
 
 // === Client-only types ===
 

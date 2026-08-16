@@ -5,7 +5,7 @@ export {
   setConsumablesWebUser,
   clearConsumablesWebUser,
   hasConsumablesWebUser,
-} from "./revenuecat-web";
+} from "./revenuecat-web.js";
 
 // React Native adapter
 export {
@@ -14,4 +14,4 @@ export {
   setConsumablesRNUser,
   clearConsumablesRNUser,
   hasConsumablesRNUser,
-} from "./revenuecat-rn";
+} from "./revenuecat-rn.js";
