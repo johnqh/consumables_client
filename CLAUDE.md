@@ -1,5 +1,10 @@
 # Consumables Client
 
+> **Git policy — never auto-commit or auto-push.** Leave your work in the working tree.
+> Run `git commit`, `git push`, `gh pr create`, or `scripts/push_all.sh` **only when the user
+> explicitly asks in that turn**. Approval for an earlier change does not carry forward, and
+> finishing a task is not permission to commit it.
+
 Cross-platform consumable credits client with RevenueCat adapter pattern.
 
 **npm**: `@sudobility/consumables_client` (public)
@@ -137,3 +142,7 @@ Dependency direction: `consumables_pages` --> `consumables_client` --> `consumab
 - Build before publish: `bun run build` produces ESM output in `dist/`
 - Bump version in `package.json`, then `npm publish --access public`
 - Consumers (e.g., `consumables_pages`) should be tested against the new version before publishing downstream
+
+## Git Workflow
+
+- Do not use feature branches for code changes. Always stay on the current branch.
