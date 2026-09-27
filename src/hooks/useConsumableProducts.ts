@@ -30,29 +30,34 @@ export function useConsumableProducts(
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  const loadProducts = useCallback(async () => {
-    if (!isConsumablesInitialized()) {
-      setIsLoading(false);
-      return;
-    }
+  const loadProducts = useCallback(
+    async (forceRefresh = false) => {
+      if (!isConsumablesInitialized()) {
+        setIsLoading(false);
+        return;
+      }
 
-    setIsLoading(true);
-    setError(null);
-    try {
-      const instance = getConsumablesInstance();
-      await instance.loadOfferings();
-      const offering = instance.getOffering(offeringId);
-      setPackages(offering?.packages ?? []);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error(String(err)));
-    } finally {
-      setIsLoading(false);
-    }
-  }, [offeringId]);
+      setIsLoading(true);
+      setError(null);
+      try {
+        const instance = getConsumablesInstance();
+        if (forceRefresh) await instance.refreshOfferings();
+        else await instance.loadOfferings();
+        const offering = instance.getOffering(offeringId);
+        setPackages(offering?.packages ?? []);
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error(String(err)));
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [offeringId],
+  );
 
   useEffect(() => {
     loadProducts();
   }, [loadProducts]);
 
-  return { packages, isLoading, error, refetch: loadProducts };
+  const refetch = useCallback(() => loadProducts(true), [loadProducts]);
+  return { packages, isLoading, error, refetch };
 }

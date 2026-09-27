@@ -132,7 +132,9 @@ export function createConsumablesRNAdapter(): ConsumablesAdapter {
         return { all };
       } catch (error) {
         console.error("[consumables-rn] Failed to get offerings:", error);
-        return { all: {} };
+        throw error instanceof Error
+          ? error
+          : new Error("Unable to load RevenueCat offerings");
       }
     },
 

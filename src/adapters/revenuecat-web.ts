@@ -143,7 +143,9 @@ export function createConsumablesWebAdapter(): ConsumablesAdapter {
         return { all };
       } catch (error) {
         console.error("[consumables-web] Failed to get offerings:", error);
-        return { all: {} };
+        throw error instanceof Error
+          ? error
+          : new Error("Unable to load RevenueCat offerings");
       }
     },
 

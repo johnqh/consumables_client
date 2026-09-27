@@ -39,6 +39,9 @@ function createMockAdapter(): ConsumablesAdapter {
 
 function createMockApiClient() {
   return {
+    getCreditProducts: vi
+      .fn()
+      .mockResolvedValue([{ productId: "credits_5", credits: 5 }]),
     getBalance: vi
       .fn()
       .mockResolvedValue({ balance: 10, initialCredits: 3 }),

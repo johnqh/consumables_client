@@ -75,6 +75,23 @@ export class ConsumablesApiClient {
     };
   }
 
+  /** Fetches the server-approved RevenueCat product/credit mapping. */
+  async getCreditProducts(): Promise<
+    Array<{ productId: string; credits: number }>
+  > {
+    const response = await this.networkClient.get<
+      ApiResponse<{
+        products: Array<{ productId: string; credits: number }>;
+      }>
+    >(`${this.baseUrl}/api/v1/public/consumables/offerings`);
+    if (!response.ok || !response.data) {
+      throw new Error(
+        response.data?.error || `Request failed: ${response.status}`,
+      );
+    }
+    return response.data.data.products;
+  }
+
   /**
    * Records a purchase on the backend and returns the updated balance.
    * @param params - Purchase details including credits, source, and optional transaction metadata.

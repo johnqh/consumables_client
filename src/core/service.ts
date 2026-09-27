@@ -39,17 +39,31 @@ export class ConsumablesService {
    * Caches results globally; subsequent calls are no-ops if cache is populated.
    * Deduplicates concurrent calls via a shared promise.
    */
-  async loadOfferings(): Promise<void> {
-    if (this.offeringsCache.size > 0) return;
+  async loadOfferings(options: { forceRefresh?: boolean } = {}): Promise<void> {
+    if (this.offeringsCache.size > 0 && !options.forceRefresh) return;
     if (this.loadOfferingsPromise) return this.loadOfferingsPromise;
 
     this.loadOfferingsPromise = (async () => {
       try {
-        const result = await this.adapter.getOfferings();
+        const [result, creditProducts] = await Promise.all([
+          this.adapter.getOfferings(),
+          this.apiClient.getCreditProducts(),
+        ]);
+        const approvedCredits = new Map(
+          creditProducts.map(({ productId, credits }) => [productId, credits]),
+        );
+        this.offeringsCache.clear();
         for (const [key, offering] of Object.entries(result.all)) {
           this.offeringsCache.set(key, {
             offeringId: offering.identifier,
-            packages: offering.packages,
+            // The API owns the credit amount and product allowlist. RevenueCat
+            // SDK metadata is display configuration and is never authoritative.
+            packages: offering.packages
+              .filter((pkg) => approvedCredits.has(pkg.productId))
+              .map((pkg) => ({
+                ...pkg,
+                credits: approvedCredits.get(pkg.productId)!,
+              })),
           });
         }
       } finally {
@@ -58,6 +72,11 @@ export class ConsumablesService {
     })();
 
     return this.loadOfferingsPromise;
+  }
+
+  /** Refreshes the RevenueCat catalog, for example after a store configuration change. */
+  async refreshOfferings(): Promise<void> {
+    return this.loadOfferings({ forceRefresh: true });
   }
 
   /**
