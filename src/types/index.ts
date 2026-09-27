@@ -16,7 +16,12 @@ export interface ProductMetadata {
 
 /** A purchasable credit package from RevenueCat. */
 export interface CreditPackage {
+  /** Public UI key. When aggregating offerings this includes the offering ID. */
   packageId: string;
+  /** RevenueCat package identifier passed to the purchase SDK. */
+  storePackageId?: string;
+  /** RevenueCat offering containing this package. */
+  offeringId?: string;
   productId: string;
   title: string;
   description: string | null;

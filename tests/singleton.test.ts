@@ -31,6 +31,7 @@ function createMockAdapter(): ConsumablesAdapter {
 
 function createMockApiClient(): ConsumablesApiClient {
   return {
+    getSelectedEntityId: vi.fn().mockReturnValue("entity-1"),
     getBalance: vi
       .fn()
       .mockResolvedValue({ balance: 10, initialCredits: 3 }),

@@ -24,7 +24,7 @@ export interface UseConsumableProductsResult {
  * @returns Available packages, loading/error state, and a refetch function.
  */
 export function useConsumableProducts(
-  offeringId: string,
+  offeringId = "",
 ): UseConsumableProductsResult {
   const [packages, setPackages] = useState<CreditPackage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -43,8 +43,12 @@ export function useConsumableProducts(
         const instance = getConsumablesInstance();
         if (forceRefresh) await instance.refreshOfferings();
         else await instance.loadOfferings();
-        const offering = instance.getOffering(offeringId);
-        setPackages(offering?.packages ?? []);
+        const offeringIds = offeringId
+          ? [offeringId]
+          : instance.getOfferingIds();
+        setPackages(
+          offeringIds.flatMap((id) => instance.getOffering(id)?.packages ?? []),
+        );
       } catch (err) {
         setError(err instanceof Error ? err : new Error(String(err)));
       } finally {

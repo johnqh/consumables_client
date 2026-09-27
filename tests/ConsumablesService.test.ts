@@ -39,6 +39,8 @@ function createMockAdapter(): ConsumablesAdapter {
 
 function createMockApiClient() {
   return {
+    getSelectedEntityId: vi.fn().mockReturnValue("entity-1"),
+    prepareCreditPurchase: vi.fn().mockResolvedValue(undefined),
     getCreditProducts: vi
       .fn()
       .mockResolvedValue([{ productId: "credits_5", credits: 5 }]),
@@ -153,6 +155,7 @@ describe("ConsumablesService", () => {
 
   describe("purchase", () => {
     it("should call adapter.purchase then apiClient.recordPurchase", async () => {
+      await service.loadOfferings();
       const result = await service.purchase({
         packageId: "pkg_5",
         offeringId: "default",
@@ -180,6 +183,7 @@ describe("ConsumablesService", () => {
     });
 
     it("should update balance cache after purchase", async () => {
+      await service.loadOfferings();
       await service.purchase({
         packageId: "pkg_5",
         offeringId: "default",

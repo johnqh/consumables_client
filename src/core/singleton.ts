@@ -54,7 +54,7 @@ export function resetConsumables(): void {
 /** Refresh balance from server and notify listeners. */
 export async function refreshConsumablesBalance(): Promise<void> {
   if (!instance) return;
-  await instance.loadBalance();
+  await instance.loadBalance({ forceRefresh: true });
   for (const listener of balanceChangeListeners) {
     listener();
   }

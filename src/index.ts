@@ -26,6 +26,8 @@ export {
 export {
   ConsumablesApiClient,
   type ConsumablesApiClientConfig,
+  type CreditCoupon,
+  type CreditCouponHistoryItem,
 } from "./network/ConsumablesApiClient";
 
 // Hooks

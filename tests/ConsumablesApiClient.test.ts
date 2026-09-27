@@ -67,6 +67,7 @@ describe("ConsumablesApiClient", () => {
       expect(result).toEqual({ balance: 10, initialCredits: 3 });
       expect(mockNetwork.get).toHaveBeenCalledWith(
         "https://api.test.com/api/v1/consumables/balance",
+        { headers: {} },
       );
     });
   });
@@ -97,6 +98,7 @@ describe("ConsumablesApiClient", () => {
           price_cents: 2000,
           currency: "USD",
         },
+        { headers: {} },
       );
     });
   });
@@ -113,6 +115,7 @@ describe("ConsumablesApiClient", () => {
       expect(mockNetwork.post).toHaveBeenCalledWith(
         "https://api.test.com/api/v1/consumables/use",
         { filename: "logo.svg" },
+        { headers: {} },
       );
     });
 
@@ -126,6 +129,7 @@ describe("ConsumablesApiClient", () => {
       expect(mockNetwork.post).toHaveBeenCalledWith(
         "https://api.test.com/api/v1/consumables/use",
         { filename: undefined },
+        { headers: {} },
       );
     });
   });
@@ -133,7 +137,7 @@ describe("ConsumablesApiClient", () => {
   describe("getPurchaseHistory", () => {
     it("should fetch purchase history with pagination", async () => {
       const purchases = [
-        { id: 1, credits: 25, source: "web", created_at: "2025-01-01" },
+        { id: 1, credits: 25, source: "web", created_at: "2025-01-01", transaction_ref_id: null, product_id: null, price_cents: null, currency: null },
       ];
       mockNetwork.get.mockResolvedValueOnce(okResponse(purchases));
 
@@ -142,6 +146,7 @@ describe("ConsumablesApiClient", () => {
       expect(result).toEqual(purchases);
       expect(mockNetwork.get).toHaveBeenCalledWith(
         "https://api.test.com/api/v1/consumables/purchases?limit=10&offset=5",
+        { headers: {} },
       );
     });
 
@@ -152,6 +157,7 @@ describe("ConsumablesApiClient", () => {
 
       expect(mockNetwork.get).toHaveBeenCalledWith(
         "https://api.test.com/api/v1/consumables/purchases?limit=50&offset=0",
+        { headers: {} },
       );
     });
   });
@@ -159,7 +165,7 @@ describe("ConsumablesApiClient", () => {
   describe("getUsageHistory", () => {
     it("should fetch usage history with pagination", async () => {
       const usages = [
-        { id: 1, filename: "test.svg", created_at: "2025-01-01" },
+        { id: 1, filename: "test.svg", created_at: "2025-01-01", credits: 1, reference: null },
       ];
       mockNetwork.get.mockResolvedValueOnce(okResponse(usages));
 
@@ -168,6 +174,7 @@ describe("ConsumablesApiClient", () => {
       expect(result).toEqual(usages);
       expect(mockNetwork.get).toHaveBeenCalledWith(
         "https://api.test.com/api/v1/consumables/usages?limit=20&offset=10",
+        { headers: {} },
       );
     });
   });
@@ -192,6 +199,7 @@ describe("ConsumablesApiClient", () => {
 
       expect(mockNetwork.get).toHaveBeenCalledWith(
         "https://api.test.com/api/v1/consumables/balance",
+        { headers: {} },
       );
     });
   });

@@ -145,7 +145,10 @@ export function createConsumablesRNAdapter(): ConsumablesAdapter {
       const offerings = await Purchases.getOfferings();
 
       let packageToPurchase: any;
-      for (const offering of Object.values(offerings.all) as any[]) {
+      const selectedOffering = (offerings.all as any)[params.offeringId];
+      for (const offering of (selectedOffering
+        ? [selectedOffering]
+        : Object.values(offerings.all)) as any[]) {
         packageToPurchase = offering.availablePackages.find(
           (pkg: any) => pkg.identifier === params.packageId,
         );

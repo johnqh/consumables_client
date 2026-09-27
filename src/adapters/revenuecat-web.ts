@@ -156,7 +156,10 @@ export function createConsumablesWebAdapter(): ConsumablesAdapter {
       const offerings = await purchases.getOfferings();
 
       let packageToPurchase: Package | undefined;
-      for (const offering of Object.values(offerings.all)) {
+      const selectedOffering = offerings.all[params.offeringId];
+      for (const offering of selectedOffering
+        ? [selectedOffering]
+        : Object.values(offerings.all)) {
         packageToPurchase = offering.availablePackages.find(
           (pkg) => pkg.identifier === params.packageId,
         );

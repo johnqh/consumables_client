@@ -25,9 +25,13 @@ export class ConsumablesService {
   private adapter: ConsumablesAdapter;
   private apiClient: ConsumablesApiClient;
   private balanceCache: CreditBalance | null = null;
+  private balanceCacheEntityId: string | null = null;
   private offeringsCache: Map<string, CreditOffering> = new Map();
+  private approvedCredits: Map<string, number> = new Map();
   private loadOfferingsPromise: Promise<void> | null = null;
   private loadBalancePromise: Promise<CreditBalance> | null = null;
+  private loadBalancePromiseEntityId: string | null = null;
+  private balanceLoadSequence = 0;
 
   constructor(config: ConsumablesServiceConfig) {
     this.adapter = config.adapter;
@@ -49,8 +53,11 @@ export class ConsumablesService {
           this.adapter.getOfferings(),
           this.apiClient.getCreditProducts(),
         ]);
-        const approvedCredits = new Map(
-          creditProducts.map(({ productId, credits }) => [productId, credits]),
+        this.approvedCredits = new Map(
+          creditProducts.map(({ productId, credits }) => [
+            productId.toLowerCase(),
+            credits,
+          ]),
         );
         this.offeringsCache.clear();
         for (const [key, offering] of Object.entries(result.all)) {
@@ -59,10 +66,15 @@ export class ConsumablesService {
             // The API owns the credit amount and product allowlist. RevenueCat
             // SDK metadata is display configuration and is never authoritative.
             packages: offering.packages
-              .filter((pkg) => approvedCredits.has(pkg.productId))
+              .filter((pkg) =>
+                this.approvedCredits.has(pkg.productId.toLowerCase()),
+              )
               .map((pkg) => ({
                 ...pkg,
-                credits: approvedCredits.get(pkg.productId)!,
+                credits: this.approvedCredits.get(pkg.productId.toLowerCase())!,
+                offeringId: offering.identifier,
+                storePackageId: pkg.packageId,
+                packageId: `${offering.identifier}::${pkg.packageId}`,
               })),
           });
         }
@@ -101,20 +113,47 @@ export class ConsumablesService {
    * Caches the result; returns cached value if a load is already in progress.
    * @returns The user's credit balance.
    */
-  async loadBalance(): Promise<CreditBalance> {
-    if (this.balanceCache) return this.balanceCache;
-    if (this.loadBalancePromise) return this.loadBalancePromise;
+  async loadBalance(
+    options: { forceRefresh?: boolean } = {},
+  ): Promise<CreditBalance> {
+    const entityId = this.apiClient.getSelectedEntityId();
+    if (
+      this.balanceCache &&
+      this.balanceCacheEntityId === entityId &&
+      !options.forceRefresh
+    )
+      return this.balanceCache;
+    if (
+      this.loadBalancePromise &&
+      this.loadBalancePromiseEntityId === entityId &&
+      !options.forceRefresh
+    )
+      return this.loadBalancePromise;
 
-    this.loadBalancePromise = (async () => {
+    const requestId = ++this.balanceLoadSequence;
+    const request = (async () => {
       try {
-        this.balanceCache = await this.apiClient.getBalance();
-        return this.balanceCache;
+        const balance = await this.apiClient.getBalance();
+        // An entity switch can happen while the request is in flight. Do not
+        // let the old response replace the balance for the newly selected one.
+        if (
+          this.apiClient.getSelectedEntityId() === entityId &&
+          requestId === this.balanceLoadSequence
+        ) {
+          this.balanceCache = balance;
+          this.balanceCacheEntityId = entityId;
+        }
+        return balance;
       } finally {
-        this.loadBalancePromise = null;
+        if (requestId === this.balanceLoadSequence) {
+          this.loadBalancePromise = null;
+          this.loadBalancePromiseEntityId = null;
+        }
       }
     })();
-
-    return this.loadBalancePromise;
+    this.loadBalancePromise = request;
+    this.loadBalancePromiseEntityId = entityId;
+    return request;
   }
 
   /**
@@ -132,12 +171,41 @@ export class ConsumablesService {
    * @returns The updated credit balance after the purchase.
    */
   async purchase(params: ConsumablePurchaseParams): Promise<CreditBalance> {
+    const offering = this.offeringsCache.get(params.offeringId);
+    const selectedPackage = offering?.packages.find(
+      (pkg) =>
+        pkg.packageId === params.packageId ||
+        pkg.storePackageId === params.packageId,
+    );
+    if (!selectedPackage)
+      throw new Error("This credit package is no longer available");
+    const adapterParams = {
+      ...params,
+      packageId: selectedPackage.storePackageId ?? selectedPackage.packageId,
+    };
+    await this.apiClient.prepareCreditPurchase();
     // 1. Call adapter.purchase() — opens RevenueCat payment UI
-    const purchaseResult = await this.adapter.purchase(params);
+    const purchaseResult = await this.adapter.purchase(adapterParams);
+    if (
+      purchaseResult.productId.toLowerCase() !==
+      selectedPackage.productId.toLowerCase()
+    ) {
+      throw new Error(
+        "RevenueCat returned a different product than the selected credit package",
+      );
+    }
 
     // 2. Record on backend
+    const approvedCredits = this.approvedCredits.get(
+      purchaseResult.productId.toLowerCase(),
+    );
+    if (approvedCredits === undefined) {
+      throw new Error(
+        `Product ${purchaseResult.productId} is not configured for credit purchases`,
+      );
+    }
     const balance = await this.apiClient.recordPurchase({
-      credits: purchaseResult.credits,
+      credits: approvedCredits,
       source: purchaseResult.source,
       transaction_ref_id: purchaseResult.transactionId,
       product_id: purchaseResult.productId,
@@ -147,6 +215,8 @@ export class ConsumablesService {
 
     // 3. Update cache
     this.balanceCache = balance;
+    this.balanceCacheEntityId = this.apiClient.getSelectedEntityId();
+    this.balanceLoadSequence += 1;
 
     return balance;
   }
@@ -163,12 +233,16 @@ export class ConsumablesService {
     const result = await this.apiClient.recordUsage(filename);
 
     // Update cache
-    if (this.balanceCache) {
+    if (
+      this.balanceCache &&
+      this.balanceCacheEntityId === this.apiClient.getSelectedEntityId()
+    ) {
       this.balanceCache = {
         ...this.balanceCache,
         balance: result.balance,
       };
     }
+    this.balanceLoadSequence += 1;
 
     return result;
   }
@@ -205,6 +279,8 @@ export class ConsumablesService {
    */
   clearCache(): void {
     this.balanceCache = null;
+    this.balanceCacheEntityId = null;
+    this.balanceLoadSequence += 1;
     // Preserve offerings cache — products don't change per user
   }
 
